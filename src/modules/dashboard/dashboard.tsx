@@ -1,14 +1,14 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import { Table } from "../table/table";
-import { PatientsData } from "../types/patients";
+import { PatientRecord } from "../types/patients";
 
 const DashboardContainer = styled.div`
   margin: ${({ theme }) => `${theme.spacing[4]}`};
 `;
 
 export interface DashboardProps {
-  data: PatientsData[];
+  data: PatientRecord[];
 }
 
 export const Dashboard: FC<DashboardProps> = (props): JSX.Element => {

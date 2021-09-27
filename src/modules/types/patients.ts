@@ -1,4 +1,4 @@
-export interface PatientsData {
+export interface PatientRecord {
   data: PatientData;
   kids: PatientKids;
 }
@@ -26,7 +26,7 @@ export interface HasRelatives {
 
 export interface HasRelativesRecord {
   data: RelativesData;
-  kids: RelativeKids;
+  kids: RelativesKids;
 }
 
 export interface RelativesData {
@@ -36,7 +36,7 @@ export interface RelativesData {
   "Frequency of visits": string;
 }
 
-export interface RelativeKids {
+export interface RelativesKids {
   has_phone?: HasPhone;
 }
 
