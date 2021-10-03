@@ -1,28 +1,23 @@
-import React, { FC } from "react";
-import { getHeadline } from "../helpers/get-headline";
-import {
-  HasPhoneRecord,
-  HasRelativesRecord,
-  PatientRecord,
-} from "../types/patients";
+import React from "react";
+import { Row } from "../types/types";
 import { TableRow } from "./table-row";
 
-export interface TableBody {
-  data: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+export interface TableBodyProps<D> {
+  entity: Row<D>[];
+  columns: string[];
+  subTable: React.ReactNode;
 }
 
-export const TableBody: FC<TableBody> = (props) => {
-  const { data } = props;
-
-  const headlines = getHeadline(data[0].data);
+export function TableBody<D>(props: TableBodyProps<D>) {
+  const { entity, columns, subTable } = props;
 
   return (
     <tbody>
-      {data.map((row, index) => (
-        <TableRow key={index} row={row} index={index} columns={headlines} />
+      {entity.map((row, index) => (
+        <TableRow key={index} row={row} columns={columns} subTable={subTable} />
       ))}
     </tbody>
   );
-};
+}
 
 TableBody.displayName = "Table Body";

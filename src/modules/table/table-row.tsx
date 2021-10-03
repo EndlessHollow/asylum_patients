@@ -1,15 +1,8 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as ExpandMore } from "../../assets/expand-more.svg";
-import { getRecordsFromKids } from "../helpers/get-records-from-kids";
 import { getTableCells } from "../helpers/get-table-cells";
-import {
-  HasPhoneRecord,
-  HasRelativesRecord,
-  PatientRecord,
-} from "../types/patients";
-import { TextAlign } from "../types/types";
-import { renderTable } from "./table";
+import { Row, TextAlign } from "../types/types";
 
 const TableCell = styled.td<{ textAlign?: TextAlign }>`
   padding: ${({ theme }) => theme.spacing["2"]};
@@ -31,20 +24,18 @@ const InnerTable = styled.td.attrs(({ colSpan }) => ({
   padding: ${({ theme }) => `${theme.spacing["2"]} ${theme.spacing["4"]}`};
 `;
 
-export interface TableRow {
-  row: PatientRecord | HasRelativesRecord | HasPhoneRecord;
-  columns: string[] | undefined;
-  index: number;
+export interface TableRowProps<D> {
+  row: Row<D>;
+  columns: string[];
+  subTable: React.ReactNode;
 }
 
-export const TableRow: FC<TableRow> = (props) => {
-  const { row, columns, index } = props;
+export function TableRow<D>(props: TableRowProps<D>) {
+  const { row, columns, subTable } = props;
   const [isOpen, handleOpen] = useState(false);
 
   const tableCellsData = getTableCells(row.data);
-  const kidsRecord = getRecordsFromKids(row.kids);
-  const kidsData = Object.keys(row.kids)[0];
-  const hasSubTable = Object.keys(row.kids).length > 0;
+  const hasSubTable = row.kids.length > 0;
 
   const toggleInnerTable = () => {
     handleOpen(!isOpen);
@@ -52,7 +43,7 @@ export const TableRow: FC<TableRow> = (props) => {
 
   return (
     <>
-      <tr key={index}>
+      <tr>
         {hasSubTable ? (
           <TableCell textAlign="center">
             <ExpandMoreIcon isOpen={isOpen} onClick={toggleInnerTable} />
@@ -71,10 +62,10 @@ export const TableRow: FC<TableRow> = (props) => {
             isOpen={isOpen}
             colSpan={columns?.length ? columns?.length + 1 : undefined}
           >
-            {renderTable(kidsRecord, kidsData)}
+            {subTable}
           </InnerTable>
         </tr>
       )}
     </>
   );
-};
+}

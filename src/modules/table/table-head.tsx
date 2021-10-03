@@ -16,7 +16,7 @@ const TableHeadline = styled.th<{
   vertical-align: middle;
 `;
 
-const InnerTableSubheading = styled.th.attrs(({ colSpan }) => ({
+const TableTitle = styled.th.attrs(({ colSpan }) => ({
   colspan: colSpan || undefined,
 }))<{ textAlign: TextAlign }>`
   font-weight: ${({ theme }) => theme.fontWeight.fontBold};
@@ -29,21 +29,21 @@ const InnerTableSubheading = styled.th.attrs(({ colSpan }) => ({
 
 export interface TableHeadProps {
   headlines: string[];
-  tableSubheading?: string;
+  tableTitle?: string;
 }
 
 export const TableHead: FC<TableHeadProps> = (props) => {
-  const { headlines, tableSubheading } = props;
-  const headlineLength = headlines.length + 1;
+  const { headlines, tableTitle } = props;
+  const columns = headlines.length + 1;
 
   return (
     <StyledTableHead>
-      {tableSubheading ? (
+      {tableTitle ? (
         <>
           <tr>
-            <InnerTableSubheading colSpan={headlineLength} textAlign={"left"}>
-              {tableSubheading}
-            </InnerTableSubheading>
+            <TableTitle colSpan={columns} textAlign={"left"}>
+              {tableTitle}
+            </TableTitle>
           </tr>
           <tr>
             <th></th>
