@@ -24,14 +24,20 @@ const InnerTable = styled.td.attrs(({ colSpan }) => ({
   padding: ${({ theme }) => `${theme.spacing["2"]} ${theme.spacing["4"]}`};
 `;
 
+const StyledRow = styled.tr<{ index: number }>`
+  background-color: ${({ index, theme }) =>
+    index % 2 !== 0 ? theme.colors.lightGrey : undefined};
+`;
+
 export interface TableRowProps<D> {
   row: Row<D>;
   columns: string[];
+  index: number;
   subTable: React.ReactNode;
 }
 
 export function TableRow<D>(props: TableRowProps<D>) {
-  const { row, columns, subTable } = props;
+  const { row, columns, index, subTable } = props;
   const [isOpen, handleOpen] = useState(false);
 
   const tableCellsData = getTableCells(row.data);
@@ -43,7 +49,7 @@ export function TableRow<D>(props: TableRowProps<D>) {
 
   return (
     <>
-      <tr>
+      <StyledRow key={index} index={index}>
         {hasSubTable ? (
           <TableCell textAlign="center">
             <ExpandMoreIcon isOpen={isOpen} onClick={toggleInnerTable} />
@@ -55,7 +61,7 @@ export function TableRow<D>(props: TableRowProps<D>) {
         {tableCellsData.map((cell, index) => (
           <TableCell key={index}>{cell}</TableCell>
         ))}
-      </tr>
+      </StyledRow>
       {hasSubTable && (
         <tr>
           <InnerTable

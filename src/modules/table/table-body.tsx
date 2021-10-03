@@ -14,7 +14,13 @@ export function TableBody<D>(props: TableBodyProps<D>) {
   return (
     <tbody>
       {entity.map((row, index) => (
-        <TableRow key={index} row={row} columns={columns} subTable={subTable} />
+        <TableRow
+          key={index}
+          row={row}
+          columns={columns}
+          index={index}
+          subTable={subTable}
+        />
       ))}
     </tbody>
   );
