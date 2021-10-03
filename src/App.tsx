@@ -1,20 +1,25 @@
 import React from "react";
-import { ThemeProvider } from "styled-components";
-import * as patientsData from "./data/patients.json";
-import { Dashboard } from "./modules/dashboard/dashboard";
+import { Provider } from "react-redux";
+import styled, { ThemeProvider } from "styled-components";
+import { PatientsTable } from "./modules/table/patients-table";
+import { store } from "./redux/store";
 import { GlobalStyle } from "./utils/global-style";
 import theme from "./utils/theme";
 
-const App = () => {
-  const { default: data } = JSON.parse(JSON.stringify(patientsData));
+const AppContainer = styled.div`
+  margin: ${({ theme }) => `${theme.spacing[4]}`};
+`;
 
+const App = () => {
   return (
-    <>
+    <Provider store={store}>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Dashboard data={data} />
+        <AppContainer>
+          <PatientsTable />
+        </AppContainer>
       </ThemeProvider>
-    </>
+    </Provider>
   );
 };
 

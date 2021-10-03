@@ -6,3 +6,6 @@ export type TextAlign =
   | "center"
   | "justify"
   | "match-parent";
+
+export type Row<D> = { data: D; kids: string[] };
+export type RowRecord<D> = Record<string, Row<D>>;
