@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import styled from "styled-components";
+import { ReactComponent as DeleteIcon } from "../../assets/delete.svg";
 import { ReactComponent as ExpandMore } from "../../assets/expand-more.svg";
+import { useAppDispatch } from "../../redux/hooks";
+import { deleteRow } from "../../redux/patients-slice";
+import { getChildRecords } from "../helpers/get-child-records";
 import { getTableCells } from "../helpers/get-table-cells";
-import { Row, TextAlign } from "../types/types";
+import {
+  HasPhoneRecord,
+  HasRelativesRecord,
+  PatientRecord,
+} from "../types/patients";
+import { TextAlign } from "../types/types";
+import { Table } from "./table";
 
 const TableCell = styled.td<{ textAlign?: TextAlign }>`
   padding: ${({ theme }) => theme.spacing["2"]};
@@ -24,24 +34,41 @@ const InnerTable = styled.td.attrs(({ colSpan }) => ({
   padding: ${({ theme }) => `${theme.spacing["2"]} ${theme.spacing["4"]}`};
 `;
 
-const StyledRow = styled.tr<{ index: number }>`
-  background-color: ${({ index, theme }) =>
-    index % 2 !== 0 ? theme.colors.lightGrey : undefined};
+const StyledRow = styled.tr<{ index: number; isOpen: boolean }>`
+  background-color: ${({ index, theme, isOpen }) =>
+    isOpen
+      ? theme.colors.active
+      : index % 2 !== 0
+      ? theme.colors.lightGrey
+      : undefined};
 `;
 
-export interface TableRowProps<D> {
-  row: Row<D>;
-  columns: string[];
+const DeleteButton = styled.button`
+  border: 0;
+  background-color: transparent;
+  border-radius: 50%;
+`;
+
+export interface TableRowProps {
+  row: PatientRecord | HasRelativesRecord | HasPhoneRecord;
+  columns: number;
   index: number;
-  subTable: React.ReactNode;
+  indices: number[];
 }
 
-export function TableRow<D>(props: TableRowProps<D>) {
-  const { row, columns, index, subTable } = props;
+export const TableRow: FC<TableRowProps> = (props): JSX.Element => {
+  const { row, columns, index, indices } = props;
+  const dispatch = useAppDispatch();
   const [isOpen, handleOpen] = useState(false);
 
   const tableCellsData = getTableCells(row.data);
-  const hasSubTable = row.kids.length > 0;
+  const childRecords = getChildRecords(row.kids);
+  const tableTitle = Object.keys(row.kids)[0];
+  const hasSubTable = Object.keys(row.kids).length > 0;
+
+  React.useEffect(() => {
+    indices.push(index);
+  }, [indices, index]);
 
   const toggleInnerTable = () => {
     handleOpen(!isOpen);
@@ -49,7 +76,7 @@ export function TableRow<D>(props: TableRowProps<D>) {
 
   return (
     <>
-      <StyledRow key={index} index={index}>
+      <StyledRow key={index} index={index} isOpen={isOpen}>
         {hasSubTable ? (
           <TableCell textAlign="center">
             <ExpandMoreIcon isOpen={isOpen} onClick={toggleInnerTable} />
@@ -61,17 +88,23 @@ export function TableRow<D>(props: TableRowProps<D>) {
         {tableCellsData.map((cell, index) => (
           <TableCell key={index}>{cell}</TableCell>
         ))}
+        <TableCell textAlign="center">
+          <DeleteButton onClick={() => dispatch(deleteRow(indices))}>
+            <DeleteIcon />
+          </DeleteButton>
+        </TableCell>
       </StyledRow>
       {hasSubTable && (
         <tr>
-          <InnerTable
-            isOpen={isOpen}
-            colSpan={columns?.length ? columns?.length + 1 : undefined}
-          >
-            {subTable}
+          <InnerTable isOpen={isOpen} colSpan={columns ? columns : undefined}>
+            <Table
+              tableTitle={tableTitle}
+              indices={indices}
+              data={childRecords}
+            />
           </InnerTable>
         </tr>
       )}
     </>
   );
-}
+};
