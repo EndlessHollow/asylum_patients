@@ -1,36 +1,46 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PatientData, PatientRecord } from "../modules/types/patients";
-import { RowRecord } from "../modules/types/types";
-export interface PatientsInformation {
-  headlines: string[];
-  patients: RowRecord<PatientData>;
+import { PatientRecord } from "../modules/types/patients";
+
+export interface PatientsRecords {
+  data: PatientRecord[];
 }
 
-const initialState: PatientsInformation = {
-  headlines: [],
-  patients: {},
+const initialState: PatientsRecords = {
+  data: [],
 };
 
 const patientsSlice = createSlice({
   name: "patients",
   initialState,
   reducers: {
-    receivePatients: (state, action: PayloadAction<RowRecord<PatientData>>) => {
+    receivePatients: (_, action: PayloadAction<PatientRecord[]>) => {
       return {
-        headlines: state.headlines,
-        patients: action.payload,
+        data: action.payload,
       };
     },
-    receivePatientsHeadlines: (state, action: PayloadAction<string[]>) => {
-      return {
-        headlines: action.payload,
-        patients: state.patients,
-      };
+    deleteRow: (state, action: PayloadAction<number[]>) => {
+      console.log("payload", action.payload);
+      switch (action.payload.length) {
+        case 1:
+          delete state.data[action.payload[0]];
+          break;
+        case 2:
+          delete state.data[action.payload[0]].kids.has_relatives?.records[
+            action.payload[1]
+          ];
+          break;
+        case 3:
+          delete state.data[action.payload[0]].kids.has_relatives?.records[
+            action.payload[1]
+          ].kids.has_phone?.records[action.payload[2]];
+          break;
+      }
+
+      return state;
     },
   },
 });
 
-export const { receivePatients, receivePatientsHeadlines } =
-  patientsSlice.actions;
+export const { receivePatients, deleteRow } = patientsSlice.actions;
 
 export const patientsReducer = patientsSlice.reducer;

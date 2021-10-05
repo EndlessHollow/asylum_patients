@@ -1,7 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import styled, { ThemeProvider } from "styled-components";
-import { PatientsTable } from "./modules/table/patients-table";
+import { Dashboard } from "./modules/dashboard/dashboard";
 import { store } from "./redux/store";
 import { GlobalStyle } from "./utils/global-style";
 import theme from "./utils/theme";
@@ -16,7 +16,7 @@ const App = () => {
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <AppContainer>
-          <PatientsTable />
+          <Dashboard />
         </AppContainer>
       </ThemeProvider>
     </Provider>
