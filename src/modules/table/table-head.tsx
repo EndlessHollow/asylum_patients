@@ -29,12 +29,12 @@ const TableTitle = styled.th.attrs(({ colSpan }) => ({
 
 export interface TableHeadProps {
   headlines: string[];
+  columns: number;
   tableTitle?: string;
 }
 
-export const TableHead: FC<TableHeadProps> = (props) => {
-  const { headlines, tableTitle } = props;
-  const columns = headlines.length + 1;
+export const TableHead: FC<TableHeadProps> = (props): JSX.Element => {
+  const { headlines, columns, tableTitle } = props;
 
   return (
     <StyledTableHead>
@@ -50,6 +50,7 @@ export const TableHead: FC<TableHeadProps> = (props) => {
             {headlines?.map((headline) => (
               <TableHeadline key={headline}>{headline}</TableHeadline>
             ))}
+            <th></th>
           </tr>
         </>
       ) : (
@@ -60,6 +61,7 @@ export const TableHead: FC<TableHeadProps> = (props) => {
               {headline}
             </TableHeadline>
           ))}
+          <th></th>
         </tr>
       )}
     </StyledTableHead>

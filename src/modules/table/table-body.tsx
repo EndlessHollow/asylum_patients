@@ -1,15 +1,19 @@
-import React from "react";
-import { Row } from "../types/types";
+import React, { FC } from "react";
+import {
+  HasPhoneRecord,
+  HasRelativesRecord,
+  PatientRecord,
+} from "../types/patients";
 import { TableRow } from "./table-row";
 
-export interface TableBodyProps<D> {
-  entity: Row<D>[];
-  columns: string[];
-  subTable: React.ReactNode;
+export interface TableBodyProps {
+  entity: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+  columns: number;
+  indices?: number[];
 }
 
-export function TableBody<D>(props: TableBodyProps<D>) {
-  const { entity, columns, subTable } = props;
+export const TableBody: FC<TableBodyProps> = (props): JSX.Element => {
+  const { entity, columns, indices = [] } = props;
 
   return (
     <tbody>
@@ -19,11 +23,11 @@ export function TableBody<D>(props: TableBodyProps<D>) {
           row={row}
           columns={columns}
           index={index}
-          subTable={subTable}
+          indices={[...indices]}
         />
       ))}
     </tbody>
   );
-}
+};
 
 TableBody.displayName = "Table Body";

@@ -1,7 +1,11 @@
 import React, { FC } from "react";
 import styled from "styled-components";
-import { Row } from "../types/types";
-
+import { getHeadlines } from "../helpers/get-headlines";
+import {
+  HasPhoneRecord,
+  HasRelativesRecord,
+  PatientRecord,
+} from "../types/patients";
 import { TableBody } from "./table-body";
 import { TableHead } from "./table-head";
 
@@ -10,20 +14,35 @@ const StyledTable = styled.table`
   border: 1px solid ${({ theme }) => theme.colors.grey};
 `;
 
-export interface TableProps<D> {
-  headlines: string[];
-  rowRecord: Row<D>[];
-  subTable: React.ReactNode;
+interface TableProps {
+  data: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+  tableTitle?: string;
+  indices?: number[];
 }
 
-export function Table<D>(props: TableProps<D>): JSX.Element | null {
-  const { headlines, rowRecord, subTable } = props;
+export const Table: FC<TableProps> = (props): JSX.Element | null => {
+  const { data, tableTitle, indices } = props;
+  if (!data.length) {
+    return null;
+  }
+  const headlines = React.useMemo(() => getHeadlines(data[0]?.data), []);
+  const emptyCells = 2;
+  const columns = headlines.length + emptyCells;
+
   return (
     <StyledTable>
-      <TableHead headlines={headlines} />
-      <TableBody entity={rowRecord} columns={headlines} subTable={subTable} />
+      {tableTitle ? (
+        <TableHead
+          headlines={headlines || []}
+          tableTitle={tableTitle}
+          columns={columns}
+        />
+      ) : (
+        <TableHead headlines={headlines || []} columns={columns} />
+      )}
+      <TableBody entity={data} columns={columns} indices={indices} />
     </StyledTable>
   );
-}
+};
 
 Table.displayName = "Table";

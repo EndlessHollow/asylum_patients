@@ -1,6 +1,7 @@
 import { KidsPhoneData, PatientData, RelativesData } from "../types/patients";
-import { Row } from "../types/types";
 
-export const getTableCells = <D>(data: D): string[] => {
+export const getTableCells = (
+  data: PatientData | RelativesData | KidsPhoneData
+): string[] => {
   return Object.values(data);
 };
