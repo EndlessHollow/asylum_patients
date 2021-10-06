@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { getHeadline } from "../helpers/get-headline";
 import {
   HasPhoneRecord,
   HasRelativesRecord,
@@ -7,22 +6,26 @@ import {
 } from "../types/patients";
 import { TableRow } from "./table-row";
 
-export interface TableBody {
-  data: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+export interface TableBodyProps {
+  entity: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+  columns: number;
+  indices?: number[];
 }
 
-export const TableBody: FC<TableBody> = (props) => {
-  const { data } = props;
+export const TableBody: FC<TableBodyProps> = (props): JSX.Element => {
+  const { entity, columns, indices } = props;
 
-  const headlines = getHeadline(data[0].data);
+  const renderTables = entity.map((row, index) => (
+    <TableRow
+      key={index}
+      row={row}
+      columns={columns}
+      index={index}
+      indices={indices}
+    />
+  ));
 
-  return (
-    <tbody>
-      {data.map((row, index) => (
-        <TableRow key={index} row={row} index={index} columns={headlines} />
-      ))}
-    </tbody>
-  );
+  return <tbody>{renderTables}</tbody>;
 };
 
 TableBody.displayName = "Table Body";

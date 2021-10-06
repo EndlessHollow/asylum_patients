@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import styled from "styled-components";
-import { getHeadline } from "../helpers/get-headline";
+import { getHeadlines } from "../helpers/get-headlines";
 import {
   HasPhoneRecord,
   HasRelativesRecord,
@@ -14,39 +14,35 @@ const StyledTable = styled.table`
   border: 1px solid ${({ theme }) => theme.colors.grey};
 `;
 
-export const renderTable = (
-  data: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[],
-  tableSubheading?: string
-): JSX.Element | null => {
-  const headlines = getHeadline(data[0].data);
-
-  if (data.length === 0) {
-    return null;
-  }
-
-  return (
-    <StyledTable>
-      {tableSubheading ? (
-        <TableHead
-          headlines={headlines || []}
-          tableSubheading={tableSubheading}
-        />
-      ) : (
-        <TableHead headlines={headlines || []} />
-      )}
-      <TableBody data={data} />
-    </StyledTable>
-  );
-};
-
-export interface TableProps {
-  data: PatientRecord[];
+interface TableProps {
+  data: PatientRecord[] | HasRelativesRecord[] | HasPhoneRecord[];
+  tableTitle?: string;
+  indices?: number[];
 }
 
 export const Table: FC<TableProps> = (props): JSX.Element | null => {
-  const { data } = props;
+  const { data, tableTitle, indices } = props;
+  if (!data.length) {
+    return null;
+  }
+  const headlines = React.useMemo(() => getHeadlines(data[0]?.data), []);
+  const emptyCells = 2;
+  const columns = headlines.length + emptyCells;
 
-  return renderTable(data);
+  return (
+    <StyledTable>
+      {tableTitle ? (
+        <TableHead
+          headlines={headlines || []}
+          tableTitle={tableTitle}
+          columns={columns}
+        />
+      ) : (
+        <TableHead headlines={headlines || []} columns={columns} />
+      )}
+      <TableBody entity={data} columns={columns} indices={indices} />
+    </StyledTable>
+  );
 };
 
 Table.displayName = "Table";

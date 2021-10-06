@@ -5,7 +5,7 @@ import {
   RelativesKids,
 } from "../types/patients";
 
-export const getRecordsFromKids = (
+export const getChildRecords = (
   kids: PatientKids | RelativesKids
 ): HasRelativesRecord[] | HasPhoneRecord[] => {
   if (

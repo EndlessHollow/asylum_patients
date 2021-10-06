@@ -1,24 +1,16 @@
-import React, { FC } from "react";
-import styled from "styled-components";
+import { initializeStore } from "../helpers/initialize-store";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Table } from "../table/table";
-import { PatientRecord } from "../types/patients";
 
-const DashboardContainer = styled.div`
-  margin: ${({ theme }) => `${theme.spacing[4]}`};
-`;
+export const Dashboard = (): JSX.Element | null => {
+  const dispatch = useAppDispatch();
+  const { data } = useAppSelector((state) => state.patients);
+  useEffect(() => {
+    initializeStore(dispatch);
+  }, []);
 
-export interface DashboardProps {
-  data: PatientRecord[];
-}
-
-export const Dashboard: FC<DashboardProps> = (props): JSX.Element => {
-  const { data } = props;
-
-  return (
-    <DashboardContainer>
-      <Table data={data} />
-    </DashboardContainer>
-  );
+  return <Table data={data} />;
 };
 
 Dashboard.displayName = "Dashboard";
