@@ -19,7 +19,6 @@ const patientsSlice = createSlice({
       };
     },
     deleteRow: (state, action: PayloadAction<number[]>) => {
-      console.log("payload", action.payload);
       switch (action.payload.length) {
         case 1:
           delete state.data[action.payload[0]];

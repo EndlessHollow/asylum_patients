@@ -13,21 +13,19 @@ export interface TableBodyProps {
 }
 
 export const TableBody: FC<TableBodyProps> = (props): JSX.Element => {
-  const { entity, columns, indices = [] } = props;
+  const { entity, columns, indices } = props;
 
-  return (
-    <tbody>
-      {entity.map((row, index) => (
-        <TableRow
-          key={index}
-          row={row}
-          columns={columns}
-          index={index}
-          indices={[...indices]}
-        />
-      ))}
-    </tbody>
-  );
+  const renderTables = entity.map((row, index) => (
+    <TableRow
+      key={index}
+      row={row}
+      columns={columns}
+      index={index}
+      indices={indices}
+    />
+  ));
+
+  return <tbody>{renderTables}</tbody>;
 };
 
 TableBody.displayName = "Table Body";

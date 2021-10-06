@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as DeleteIcon } from "../../assets/delete.svg";
 import { ReactComponent as ExpandMore } from "../../assets/expand-more.svg";
@@ -53,22 +53,19 @@ export interface TableRowProps {
   row: PatientRecord | HasRelativesRecord | HasPhoneRecord;
   columns: number;
   index: number;
-  indices: number[];
+  indices?: number[];
 }
 
 export const TableRow: FC<TableRowProps> = (props): JSX.Element => {
-  const { row, columns, index, indices } = props;
+  const { row, columns, index, indices = [] } = props;
   const dispatch = useAppDispatch();
   const [isOpen, handleOpen] = useState(false);
+  const indicisRef = useRef([...indices, index]);
 
   const tableCellsData = getTableCells(row.data);
   const childRecords = getChildRecords(row.kids);
   const tableTitle = Object.keys(row.kids)[0];
   const hasSubTable = Object.keys(row.kids).length > 0;
-
-  React.useEffect(() => {
-    indices.push(index);
-  }, [indices, index]);
 
   const toggleInnerTable = () => {
     handleOpen(!isOpen);
@@ -89,7 +86,7 @@ export const TableRow: FC<TableRowProps> = (props): JSX.Element => {
           <TableCell key={index}>{cell}</TableCell>
         ))}
         <TableCell textAlign="center">
-          <DeleteButton onClick={() => dispatch(deleteRow(indices))}>
+          <DeleteButton onClick={() => dispatch(deleteRow(indicisRef.current))}>
             <DeleteIcon />
           </DeleteButton>
         </TableCell>
@@ -99,7 +96,7 @@ export const TableRow: FC<TableRowProps> = (props): JSX.Element => {
           <InnerTable isOpen={isOpen} colSpan={columns ? columns : undefined}>
             <Table
               tableTitle={tableTitle}
-              indices={indices}
+              indices={indicisRef.current}
               data={childRecords}
             />
           </InnerTable>
